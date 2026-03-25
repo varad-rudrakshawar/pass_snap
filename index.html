@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="description" content="PassSnap — Print-ready passport photo sheet generator" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <title>PassSnap — Passport Photo Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="noise"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <span class="logo-icon">⬡</span>
+      <span>PassSnap</span>
+    </div>
+    <div class="pwa-badge" id="installBtn" style="display:none">
+      <span>Install App</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </header>
+
+  <main>
+    <!-- STEP TRACKER -->
+    <div class="steps">
+      <div class="step active" id="step1">
+        <div class="step-num">01</div>
+        <div class="step-label">Upload</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step2">
+        <div class="step-num">02</div>
+        <div class="step-label">Enhance</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step3">
+        <div class="step-num">03</div>
+        <div class="step-label">Download</div>
+      </div>
+    </div>
+
+    <!-- PANEL 1: UPLOAD -->
+    <section class="panel" id="panel-upload">
+      <div class="panel-inner">
+        <h2>Upload Your Photo</h2>
+        <p class="sub">Use a clear, front-facing photo on a plain background for best results</p>
+
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-icon">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p>Drag &amp; drop or <span class="link">browse file</span></p>
+          <p class="hint">JPG, PNG, WEBP — max 10MB</p>
+          <input type="file" id="fileInput" accept="image/*" hidden />
+        </div>
+
+        <div class="upload-tips">
+          <div class="tip">📸 Front-facing, neutral expression</div>
+          <div class="tip">💡 Good, even lighting</div>
+          <div class="tip">🖼 Plain or solid background</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 2: ENHANCE -->
+    <section class="panel hidden" id="panel-enhance">
+      <div class="panel-inner">
+        <h2>Enhance Photo</h2>
+        <p class="sub">Fine-tune your photo before generating the print sheet</p>
+
+        <div class="enhance-layout">
+          <div class="enhance-preview">
+            <canvas id="enhanceCanvas"></canvas>
+            <span class="preview-label">Live Preview</span>
+          </div>
+          <div class="enhance-controls">
+            <div class="slider-group">
+              <label>Brightness <span id="brightnessVal">0</span></label>
+              <input type="range" id="brightness" min="-100" max="100" value="0" />
+            </div>
+            <div class="slider-group">
+              <label>Contrast <span id="contrastVal">0</span></label>
+              <input type="range" id="contrast" min="-100" max="100" value="0" />
+            </div>
+            <div class="slider-group">
+              <label>Saturation <span id="saturationVal">0</span></label>
+              <input type="range" id="saturation" min="-100" max="100" value="0" />
+            </div>
+            <div class="slider-group">
+              <label>Sharpness <span id="sharpnessVal">0</span></label>
+              <input type="range" id="sharpness" min="0" max="10" value="0" />
+            </div>
+            <button class="btn-reset" id="resetEnhance">↺ Reset All</button>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-secondary" id="backToUpload">← Back</button>
+          <button class="btn-primary" id="goToDownload">Generate Sheet →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 3: DOWNLOAD -->
+    <section class="panel hidden" id="panel-download">
+      <div class="panel-inner">
+        <h2>Print-Ready Sheet</h2>
+        <p class="sub">4×6 inch paper &middot; 12 passport photos &middot; 1200×1800 px output</p>
+
+        <div class="sheet-preview-wrap">
+          <canvas id="sheetCanvas"></canvas>
+        </div>
+
+        <div class="download-actions">
+          <button class="btn-download" id="downloadBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download 1200×1800 JPG
+          </button>
+          <button class="btn-secondary" id="backToEnhance">← Edit Again</button>
+          <button class="btn-secondary" id="startOver">Start Over</button>
+        </div>
+
+        <div class="print-info">
+          <div class="info-chip">📐 4×6 in / 10×15 cm</div>
+          <div class="info-chip">🖨 300 DPI ready</div>
+          <div class="info-chip">✂️ Cut-guide gaps included</div>
+          <div class="info-chip">🟦 12 photos per sheet</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- TOAST -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
